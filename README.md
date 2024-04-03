@@ -55,3 +55,7 @@ curl  -X POST 'http://localhost:4000/signup' -H 'Content-Type: application/json'
     "invitationcode": "invite_code"
 }'
 ```
+
+## ER Diagram
+
+![Alt text](https://github.com/durpintm/user-management/blob/main/er-diagram.png?raw=true)
