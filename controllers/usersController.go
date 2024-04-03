@@ -66,21 +66,6 @@ func SignUp(c *gin.Context) {
 }
 
 // Login
-<<<<<<< HEAD
-
-// GenerateRandomToken generates a random code of length n
-func generateRandomCode(length int) (string, error) {
-	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	token := make([]byte, length)
-	for i := range token {
-		idx, err := rand.Int(rand.Reader, big.NewInt(int64(len(charset))))
-		if err != nil {
-			return "", err
-		}
-		token[i] = charset[idx.Int64()]
-	}
-	return string(token), nil
-=======
 func Login(c *gin.Context) {
 
 	// Get the email and password from the request body
@@ -122,9 +107,64 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	// Set the JWT token in a cookie
 	c.SetSameSite(http.SameSiteLaxMode)
 	c.SetCookie("Authorization", tokenString, 3600*24*30, "", "", true, true)
-	// Send back the JWT token
-	c.JSON(http.StatusOK, gin.H{})
->>>>>>> 9da78b71a424334ce391e1f41bd89e908393c453
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Successfully logged in!",
+	})
+}
+
+// Generates invitation code
+func GenerateInvitationCode(c *gin.Context) {
+
+	inviteCode, err := generateRandomCode(12)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate invitation code"})
+		return
+	}
+
+	user, exists := c.Get("user")
+	if !exists {
+		// If the user object is not found in the context
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "User not found in context"})
+		return
+	}
+
+	userObj, ok := user.(models.User)
+
+	if !ok {
+		// If the user object is not of the expected type
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving user from context"})
+		return
+	}
+
+	// Create the invitation code
+	code := models.InvitationCode{InvitationCode: inviteCode, UserID: userObj.ID}
+	result := initializers.DB.Create(&code)
+
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create code"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"invitationCode": code.InvitationCode,
+		"createdBy":      userObj.Email,
+	})
+}
+
+// GenerateRandomToken generates a random code of length n
+func generateRandomCode(length int) (string, error) {
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	token := make([]byte, length)
+	for i := range token {
+		idx, err := rand.Int(rand.Reader, big.NewInt(int64(len(charset))))
+		if err != nil {
+			return "", err
+		}
+		token[i] = charset[idx.Int64()]
+	}
+	return string(token), nil
 }
