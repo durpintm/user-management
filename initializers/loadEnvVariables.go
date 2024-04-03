@@ -1,7 +1,15 @@
 package initializers
 
-import "fmt"
+import (
+	"log"
+
+	"github.com/joho/godotenv"
+)
 
 func LoadEnvVariables() {
-	fmt.Println("Load Env variables")
+	err := godotenv.Load()
+
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 }
