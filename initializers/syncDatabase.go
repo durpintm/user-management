@@ -1,9 +1,10 @@
 package initializers
 
 import (
-	"fmt"
+	"github.com/durpintm/user-management/models"
 )
 
 func SyncDatabase() {
-	fmt.Println("Sync Database models")
+	DB.AutoMigrate(&models.User{})
+	DB.AutoMigrate(&models.InvitationCode{})
 }
