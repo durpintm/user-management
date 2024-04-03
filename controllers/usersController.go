@@ -13,15 +13,27 @@ import (
 )
 
 var body struct {
-	Email    string
-	Password string
+	Email          string
+	Password       string
+	InvitationCode string
 }
 
+// Signup
 func SignUp(c *gin.Context) {
 
 	// Get the email/password from the request body
 	if c.Bind(&body) != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to read the body"})
+		return
+	}
+
+	// Validate the invitation code
+	var inviteCode models.InvitationCode
+	initializers.DB.First(&inviteCode, "invitation_code = ?", body.InvitationCode)
+
+	// If no models.InvitationCode record or IsUsed is true => validation failed
+	if inviteCode.ID == 0 || inviteCode.IsUsed {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not validate the invitation code"})
 		return
 	}
 
@@ -41,10 +53,17 @@ func SignUp(c *gin.Context) {
 		return
 	}
 
+	// Set IsUsed to true and delete the InvitationCode record
+	initializers.DB.Model(&inviteCode).Updates(models.InvitationCode{IsUsed: true})
+
+	// UPDATE InvitationCode SET deleted_at={current_time} WHERE ID = inviteCode.ID; => Soft Delete
+	initializers.DB.Delete(&inviteCode)
+
 	// Respond
 	c.JSON(http.StatusOK, gin.H{"message": "User registered successfully!"})
 }
 
+// Login
 func Login(c *gin.Context) {
 
 	// Get the email and password from the request body
