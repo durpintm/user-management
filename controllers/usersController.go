@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"crypto/rand"
+	"math/big"
 	"net/http"
 
 	"github.com/durpintm/user-management/initializers"
@@ -43,3 +45,17 @@ func SignUp(c *gin.Context) {
 }
 
 // Login
+
+// GenerateRandomToken generates a random code of length n
+func generateRandomCode(length int) (string, error) {
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	token := make([]byte, length)
+	for i := range token {
+		idx, err := rand.Int(rand.Reader, big.NewInt(int64(len(charset))))
+		if err != nil {
+			return "", err
+		}
+		token[i] = charset[idx.Int64()]
+	}
+	return string(token), nil
+}
