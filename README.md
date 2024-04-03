@@ -36,3 +36,22 @@ docker ps
 ```bash
 compiledaemon --command="./user-management"
 ```
+
+## Test the API
+
+- Assumption: At least one user should exist in the Users table to be able to generate invitation code
+
+```bash
+### User Login
+curl -X POST http://localhost:4000/login -H "Content-Type: application/json" -d "{\"email\":\"youremail@gmail.com\", \"password\":\"yourpassword\"}"
+
+### Get Invitation Code
+curl -X GET 'http://localhost:4000/invitationCode' -H 'Cookie: Authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImR1cnBpbnRoYXBhQGdtYWlsLmNvbSIsImV4cCI6MTcxNDc3MDk2MCwic3ViIjoxfQ.X69s4PfObKsoibvxudVHQ10btFtrgKFS5A5r012caC0'
+
+### City Weather using GET request
+curl  -X POST 'http://localhost:4000/signup' -H 'Content-Type: application/json' -H 'Cookie: Authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImR1cnBpbnRoYXBhQGdtYWlsLmNvbSIsImV4cCI6MTcxNDc3MTg5Miwic3ViIjoxfQ.TIyMdcoQ-UZnBTpXESLzFv3MWKHFfcOUkZizdOsULv4' --data-raw '{
+    "email": "newemail@gmail.com",
+    "password":"newpassword",
+    "invitationcode": "invite_code"
+}'
+```
