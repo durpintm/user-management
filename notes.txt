@@ -1,0 +1,13 @@
+Add go ORM : go get -u gorm.io/gorm
+Add drivers for postgres db : go get -u gorm.io/driver/postgres
+Add Gin Web Framework : go get -u github.com/gin-gonic/gin
+Add Bcrypt : go get -u golang.org/x/crypto/bcrypt
+Add JWT package : go get -u github.com/golang-jwt/jwt/v5
+Env package : go get github.com/joho/godotenv
+Add Compile package : go get github.com/githubnemo/CompileDaemon
+Install CompileDaemon : go install github.com/githubnemo/CompileDaemon
+
+Command to run compile daemon : compiledaemon --command="./user-management"
+
+Setting up postgres db
+ docker run --name GoUserManagement -e POSTGRES_USER=root -e POSTGRES_PASSWORD=Password@123# -e POSTGRES_DB=UserManagement -p 5432:5432 -d postgres
