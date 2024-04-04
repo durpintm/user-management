@@ -58,4 +58,4 @@ curl  -X POST 'http://localhost:4000/signup' -H 'Content-Type: application/json'
 
 ## ER Diagram
 
-![Alt text](https://github.com/durpintm/user-management/images/er-diagram.png?raw=true)
+![ER Diagram](https://github.com/durpintm/user-management/blob/main/images/er-diagram.png)
